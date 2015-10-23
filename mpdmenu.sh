@@ -1,5 +1,6 @@
 #!/bin/bash
 MPC="mpc --quiet -p ${1:-6600}"
+SEARCH_PATH="/space/music"
 
 # max height for vertical menu
 height=20
@@ -20,7 +21,7 @@ select_from() {
 
 search() 
 {
-	local selection=$(locate "/space/music" | rofi -dmenu -fuzzy -i)
+	local selection=$(locate "$SEARCH_PATH" | rofi -dmenu -fuzzy -i)
 	$MPC insert "file://$selection"
 	$MPC next
 	exit
