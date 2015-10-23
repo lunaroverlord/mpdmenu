@@ -6,7 +6,8 @@ height=20
 
 DMENU() {
     # Vertical menu if $3 is given
-    echo -e "$1" | dmenu -i -b -p "$2" ${3:+"-l" "$3"}
+    local current=$($MPC current)
+    echo -e "$1" | rofi -dmenu -i -mesg "$current" -p "$2" ${3:+"-l" "$3"}
 }
 
 get_playlist() {
@@ -15,6 +16,14 @@ get_playlist() {
 
 select_from() {
     DMENU "$1" "Select $2" $height
+}
+
+search() 
+{
+	local selection=$(locate "/space/music" | rofi -dmenu -fuzzy -i)
+	$MPC insert "file://$selection"
+	$MPC next
+	exit
 }
 
 add() {
@@ -55,6 +64,7 @@ jump() {
     local song=$(select_from "$playlist" "song")
 
     [ -n "$song" ] && $MPC play "${song%%\ *}"
+    exit
 }
 
 toggle(){
@@ -81,8 +91,9 @@ prev(){
     $MPC prev
 }
 while true; do
-    action=$(DMENU "Clear\nAdd\nRemove\nJump\nToggle\nPlay\nPause\nStop\nNext\nPrev" "Do you want to")
+    action=$(DMENU "/Search\nClear\nAdd\nRemove\nJump\nToggle\nPlay\nPause\nStop\nNext\nPrev" "Audio")
     case $action in
+        /Search) search;;
         Clear) $MPC clear;;
         Add) add;;
         Remove) remove;;
