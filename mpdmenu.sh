@@ -8,7 +8,7 @@ height=20
 DMENU() {
     # Vertical menu if $3 is given
     local current=$($MPC current)
-    echo -e "$1" | rofi -dmenu -i -mesg "$current" -p "$2" ${3:+"-l" "$3"}
+    echo -e "$1" | rofi -dmenu -i -auto-select -mesg "$current" -p "$2" ${3:+"-l" "$3"}
 }
 
 get_playlist() {
@@ -22,8 +22,10 @@ select_from() {
 search() 
 {
 	local selection=$(locate "$SEARCH_PATH" | rofi -dmenu -fuzzy -i)
-	$MPC insert "file://$selection"
-	$MPC next
+	if [[ $selection ]]; then
+		$MPC insert "file://$selection"
+		$MPC next
+	fi
 	exit
 }
 
@@ -92,7 +94,7 @@ prev(){
     $MPC prev
 }
 while true; do
-    action=$(DMENU "/Search\nClear\nAdd\nRemove\nJump\nToggle\nPlay\nPause\nStop\nNext\nPrev" "Audio")
+    action=$(DMENU "/Search\nClear\nAdd\nRemove\nJump\nToggle\nPlay\nPause\nStop\nNext\nPrev" "♫ ")
     case $action in
         /Search) search;;
         Clear) $MPC clear;;
